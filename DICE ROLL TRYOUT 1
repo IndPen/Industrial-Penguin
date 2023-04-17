@@ -1,0 +1,64 @@
+import random
+import tkinter as tk
+
+class DiceRollerGUI:
+    def __init__(self):
+        self.dice = {'strength': 20, 'fight': 12, 'fly': 10, 'brains': 8, 'charm': 6, 'grit': 4}
+        self.preferences = {'strength': None, 'fight': None, 'fly': None, 'brains': None, 'charm': None, 'grit': None}
+        self.results = {}
+        self.roll_button = None
+        self.result_labels = {}
+
+        # create the main window
+        self.window = tk.Tk()
+        self.window.title("Dice Roller")
+
+        # create the preference buttons
+        for i, category in enumerate(self.dice):
+            label = tk.Label(self.window, text=f"{category}: ")
+            label.grid(row=i, column=0, padx=10, pady=5)
+
+            button1 = tk.Button(self.window, text="High", command=lambda c=category: self.set_preference(c, "high"))
+            button1.grid(row=i, column=1, padx=5, pady=5)
+
+            button2 = tk.Button(self.window, text="Low", command=lambda c=category: self.set_preference(c, "low"))
+            button2.grid(row=i, column=2, padx=5, pady=5)
+
+        # create the roll button
+        self.roll_button = tk.Button(self.window, text="Roll", command=self.roll_dice)
+        self.roll_button.grid(row=len(self.dice), column=1, columnspan=2, padx=10, pady=20)
+
+        # create the result labels
+        for i, category in enumerate(self.dice):
+            label = tk.Label(self.window, text=f"{category}: ")
+            label.grid(row=i, column=3, padx=10, pady=5)
+
+            self.result_labels[category] = tk.Label(self.window, text="")
+            self.result_labels[category].grid(row=i, column=4, padx=10, pady=5)
+
+    def set_preference(self, category, preference):
+        if preference == "high":
+            self.preferences[category] = "high"
+        else:
+            self.preferences[category] = "low"
+
+    def roll_dice(self):
+        # sort the categories based on the user's preference
+        order = sorted(self.preferences, key=lambda x: self.preferences[x])
+
+        # roll the dice and assign them to the appropriate category based on the user's preference
+        self.results = {}
+        for category in order:
+            result = random.randint(1, self.dice[category])
+            self.results[category] = result
+
+        # update the result labels
+        for category in self.results:
+            self.result_labels[category].config(text=self.results[category])
+
+    def run(self):
+        self.window.mainloop()
+
+if __name__ == "__main__":
+    gui = DiceRollerGUI()
+    gui.run()
